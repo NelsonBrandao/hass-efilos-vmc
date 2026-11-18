@@ -56,7 +56,7 @@ mbpoll -a 1 -r 81 -c 4 -t 4 -1 <panel-ip>
 ### HACS
 
 1. HACS → ⋮ → **Custom repositories** → add
-   `https://github.com/NelsonBrandao/efilos-vmc`, type **Integration**.
+   `https://github.com/NelsonBrandao/hass-efilos-vmc`, type **Integration**.
 2. Install **Efilos VMC** and restart Home Assistant.
 
 ### Manual
