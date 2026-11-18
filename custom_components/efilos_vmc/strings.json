@@ -1,0 +1,124 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to the Efilos VMC",
+        "description": "Enter the address of the Controlador TS IP touch panel. Modbus must be set to TCP-ip in the panel's Installer → Communication menu (installer password 5678).",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "unit_id": "Modbus unit ID"
+        },
+        "data_description": {
+          "host": "IP address of the panel (factory default 192.168.1.243), or of a router that forwards port 502 to it.",
+          "port": "Modbus TCP port, normally 502.",
+          "unit_id": "Leave at 1 unless you changed it."
+        }
+      },
+      "fans": {
+        "title": "Fan setup",
+        "description": "Choose how your unit's fans are controlled. The feedback unit was detected automatically; change it if the fan speed sensors look wrong.",
+        "data": {
+          "speed_control": "Fan speed control",
+          "fan_feedback": "Fan speed feedback unit"
+        }
+      },
+      "reconfigure": {
+        "title": "Change connection",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "unit_id": "Modbus unit ID"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not read from the controller. Check the address, that Modbus is set to TCP-ip on the panel, and that nothing blocks port 502."
+    },
+    "abort": {
+      "already_configured": "This controller is already configured.",
+      "reconfigure_successful": "The connection was updated."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Fan setup",
+        "data": {
+          "speed_control": "Fan speed control",
+          "fan_feedback": "Fan speed feedback unit"
+        }
+      }
+    }
+  },
+  "selector": {
+    "speed_control": {
+      "options": {
+        "variable": "Variable speed (0–100 %)",
+        "three_speed": "Three speeds (1/2/3)"
+      }
+    },
+    "fan_feedback": {
+      "options": {
+        "rpm": "rpm",
+        "percent": "Percent"
+      }
+    }
+  },
+  "entity": {
+    "fan": {
+      "vmc": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "schedule": "Schedule",
+              "auto": "Auto"
+            }
+          }
+        }
+      }
+    },
+    "select": {
+      "bypass_mode": {
+        "name": "Bypass",
+        "state": {
+          "auto": "Auto",
+          "closed": "Closed",
+          "open": "Open"
+        }
+      },
+      "season": {
+        "name": "Season",
+        "state": {
+          "auto": "Auto",
+          "winter": "Winter",
+          "summer": "Summer"
+        }
+      }
+    },
+    "binary_sensor": {
+      "bypass_open": { "name": "Bypass open" },
+      "antifrost": { "name": "Antifrost" },
+      "filter_alarm": { "name": "Filter alarm" },
+      "fan_failure": { "name": "Fan failure" },
+      "alarm": { "name": "Alarm" }
+    },
+    "sensor": {
+      "outdoor_temperature": { "name": "Outdoor air temperature" },
+      "extract_temperature": { "name": "Extract air temperature" },
+      "exhaust_temperature": { "name": "Exhaust air temperature" },
+      "supply_temperature": { "name": "Supply air temperature" },
+      "water_temperature": { "name": "Water coil temperature" },
+      "supply_fan_speed": { "name": "Supply fan speed" },
+      "exhaust_fan_speed": { "name": "Exhaust fan speed" },
+      "air_quality_input": { "name": "Air quality input" },
+      "supply_pressure": { "name": "Supply pressure" },
+      "exhaust_pressure": { "name": "Exhaust pressure" },
+      "supply_airflow": { "name": "Supply airflow" },
+      "exhaust_airflow": { "name": "Exhaust airflow" },
+      "pre_heating": { "name": "Pre-heating" },
+      "post_heating": { "name": "Post-heating" },
+      "fan_hours": { "name": "Fan running hours" }
+    }
+  }
+}

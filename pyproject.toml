@@ -1,0 +1,17 @@
+[project]
+name = "efilos-vmc"
+version = "0.1.0"
+description = "Home Assistant integration for Efilos VMC units with the Controlador TS IP panel (Modbus TCP)"
+requires-python = ">=3.13"
+
+[dependency-groups]
+dev = ["pytest-homeassistant-custom-component"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py313"
