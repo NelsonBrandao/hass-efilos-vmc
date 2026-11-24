@@ -15,9 +15,9 @@ should work. Reports for other models are welcome.
 
 | Entity | What it does |
 |---|---|
-| Fan | On/off, speed 1–100 % (or 1/2/3 on three-speed units), presets **Schedule** (panel timetable) and **Auto** (air-quality sensor) |
-| Select: Bypass | Auto / Closed / Open |
-| Select: Season | Auto / Winter / Summer |
+| Fan | On/off, speed 1–100 % (or 1/2/3 on three-speed units), preset **Schedule** (panel timetable), plus **Auto** on units with an air-quality or humidity sensor |
+| Select: Season | Winter / Summer. On the tested unit this also drives the bypass. |
+| Select: Bypass (disabled by default) | Auto / Closed / Open, for units that accept it. The tested unit ignores it. |
 | Sensors | Outdoor, extract, exhaust and supply air temperature; supply and exhaust fan speed; fan running hours |
 | Binary sensors | Filter alarm, fan failure, any other alarm (with the active alarm names as an attribute), bypass open, antifrost |
 | Optional sensors (disabled by default) | Water coil temperature, air-quality input, pressures and airflows (CAV/COP units), pre/post-heating |
@@ -97,8 +97,10 @@ Copy `custom_components/efilos_vmc` into your Home Assistant
    fan speed sensors, not how you control the fan. It's detected from the
    current reading; choose rpm if those sensors show values in the
    hundreds or thousands.
+4. **Air-quality or humidity sensor fitted**: tick only if your unit has
+   one. It adds the **Auto** preset; units without a sensor ignore Auto.
 
-Both choices can be changed later under **Configure**. The IP can be
+These choices can be changed later under **Configure**. The IP can be
 changed with **Reconfigure**.
 
 ## How it behaves
@@ -111,10 +113,12 @@ changed with **Reconfigure**.
   behaviour.
 - **Web page lock:** a change made on the panel's web page blocks Modbus
   writes for 60 seconds.
-- **Fan off:** uses the controller's "fans off" flag, so the panel shows
-  the unit as off as well.
-- **Changing one setting keeps the others:** bypass, season and on/off all
-  live in one register; the integration only changes the bits it needs.
+- **Fan off and on:** off sets the speed to 0, which the controller treats
+  as off, the same as the panel's on/off key. On restores the last speed
+  or Schedule preset.
+- **Changing one setting keeps the others:** season, bypass and other
+  flags share one register; the integration only changes the bits it
+  needs.
 
 ### One Modbus client at a time
 
@@ -129,6 +133,24 @@ peer".
   integration, remove the YAML in the same restart.
 - To test with mbpoll or the probe, disable the integration first
   (**Settings → Devices & services → Efilos VMC → ⋮ → Disable**).
+
+## Tested on real hardware
+
+Air Compact 415 Lite, firmware 2501.0900, variable-speed fans, no
+air-quality sensor:
+
+| Control | Result |
+|---|---|
+| Speed 1–100 % | Works |
+| Schedule preset | Works |
+| Season Winter / Summer | Works |
+| Auto preset | Ignored (no sensor), so hidden by default |
+| Season Auto | Not offered by the panel, so not offered here |
+| Bypass Auto / Closed / Open | Ignored, so the select is disabled by default |
+| "Fans off" bit (register 20 B05) | Ignored, so off uses speed 0 instead |
+
+Results from other models are welcome; attach the diagnostics file to an
+issue.
 
 ## Not supported yet
 

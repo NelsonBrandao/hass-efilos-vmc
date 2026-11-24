@@ -20,11 +20,13 @@
         "description": "The sensor unit was detected from the current fan reading; check it before continuing.",
         "data": {
           "speed_control": "How the fan speed is set",
-          "fan_feedback": "Unit of the fan speed sensors"
+          "fan_feedback": "Unit of the fan speed sensors",
+          "auto_preset": "Air-quality or humidity sensor fitted"
         },
         "data_description": {
           "speed_control": "How you set the speed on the touch panel: a percentage, or speeds 1, 2 and 3.",
-          "fan_feedback": "Only the unit of the supply and exhaust fan speed sensors. It doesn't change how you control the fan. Choose rpm if those sensors show values in the hundreds or thousands."
+          "fan_feedback": "Only the unit of the supply and exhaust fan speed sensors. It doesn't change how you control the fan. Choose rpm if those sensors show values in the hundreds or thousands.",
+          "auto_preset": "Adds the Auto preset, which sets the speed from that sensor. Leave off if the unit has no such sensor: it ignores Auto."
         }
       },
       "reconfigure": {
@@ -50,11 +52,13 @@
         "title": "Fan setup",
         "data": {
           "speed_control": "How the fan speed is set",
-          "fan_feedback": "Unit of the fan speed sensors"
+          "fan_feedback": "Unit of the fan speed sensors",
+          "auto_preset": "Air-quality or humidity sensor fitted"
         },
         "data_description": {
           "speed_control": "How you set the speed on the touch panel: a percentage, or speeds 1, 2 and 3.",
-          "fan_feedback": "Only the unit of the supply and exhaust fan speed sensors. It doesn't change how you control the fan. Choose rpm if those sensors show values in the hundreds or thousands."
+          "fan_feedback": "Only the unit of the supply and exhaust fan speed sensors. It doesn't change how you control the fan. Choose rpm if those sensors show values in the hundreds or thousands.",
+          "auto_preset": "Adds the Auto preset, which sets the speed from that sensor. Leave off if the unit has no such sensor: it ignores Auto."
         }
       }
     }
@@ -98,7 +102,6 @@
       "season": {
         "name": "Season",
         "state": {
-          "auto": "Auto",
           "winter": "Winter",
           "summer": "Summer"
         }

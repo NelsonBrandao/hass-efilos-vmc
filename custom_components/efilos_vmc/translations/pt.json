@@ -20,11 +20,13 @@
         "description": "A unidade dos sensores foi detetada a partir da leitura atual dos ventiladores; confirme antes de continuar.",
         "data": {
           "speed_control": "Como é definida a velocidade",
-          "fan_feedback": "Unidade dos sensores de velocidade"
+          "fan_feedback": "Unidade dos sensores de velocidade",
+          "auto_preset": "Sensor de qualidade do ar ou de humidade instalado"
         },
         "data_description": {
           "speed_control": "Como define a velocidade no painel táctil: em percentagem, ou velocidades 1, 2 e 3.",
-          "fan_feedback": "Apenas a unidade dos sensores de velocidade dos ventiladores de insuflação e de extração. Não altera a forma como controla o ventilador. Escolha rpm se esses sensores mostrarem valores na casa das centenas ou dos milhares."
+          "fan_feedback": "Apenas a unidade dos sensores de velocidade dos ventiladores de insuflação e de extração. Não altera a forma como controla o ventilador. Escolha rpm se esses sensores mostrarem valores na casa das centenas ou dos milhares.",
+          "auto_preset": "Adiciona o modo Automático, que ajusta a velocidade a partir desse sensor. Deixe desligado se a unidade não tiver esse sensor: o modo Automático é ignorado."
         }
       },
       "reconfigure": {
@@ -50,11 +52,13 @@
         "title": "Configuração dos ventiladores",
         "data": {
           "speed_control": "Como é definida a velocidade",
-          "fan_feedback": "Unidade dos sensores de velocidade"
+          "fan_feedback": "Unidade dos sensores de velocidade",
+          "auto_preset": "Sensor de qualidade do ar ou de humidade instalado"
         },
         "data_description": {
           "speed_control": "Como define a velocidade no painel táctil: em percentagem, ou velocidades 1, 2 e 3.",
-          "fan_feedback": "Apenas a unidade dos sensores de velocidade dos ventiladores de insuflação e de extração. Não altera a forma como controla o ventilador. Escolha rpm se esses sensores mostrarem valores na casa das centenas ou dos milhares."
+          "fan_feedback": "Apenas a unidade dos sensores de velocidade dos ventiladores de insuflação e de extração. Não altera a forma como controla o ventilador. Escolha rpm se esses sensores mostrarem valores na casa das centenas ou dos milhares.",
+          "auto_preset": "Adiciona o modo Automático, que ajusta a velocidade a partir desse sensor. Deixe desligado se a unidade não tiver esse sensor: o modo Automático é ignorado."
         }
       }
     }
@@ -98,7 +102,6 @@
       "season": {
         "name": "Estação",
         "state": {
-          "auto": "Automático",
           "winter": "Inverno",
           "summer": "Verão"
         }

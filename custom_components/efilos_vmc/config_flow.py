@@ -15,6 +15,7 @@ from homeassistant.config_entries import (
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import callback
 from homeassistant.helpers.selector import (
+    BooleanSelector,
     NumberSelector,
     NumberSelectorConfig,
     NumberSelectorMode,
@@ -25,6 +26,7 @@ from homeassistant.helpers.selector import (
 )
 
 from .const import (
+    CONF_AUTO_PRESET,
     CONF_FAN_FEEDBACK,
     CONF_SPEED_CONTROL,
     CONF_UNIT_ID,
@@ -80,6 +82,9 @@ def _options_schema(defaults: dict[str, Any]) -> vol.Schema:
                     mode=SelectSelectorMode.LIST,
                 )
             ),
+            vol.Required(
+                CONF_AUTO_PRESET, default=defaults.get(CONF_AUTO_PRESET, False)
+            ): BooleanSelector(),
         }
     )
 

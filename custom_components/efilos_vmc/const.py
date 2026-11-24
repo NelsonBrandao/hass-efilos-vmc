@@ -12,6 +12,7 @@ MODEL: Final = "Controlador TS IP"
 CONF_UNIT_ID: Final = "unit_id"
 CONF_SPEED_CONTROL: Final = "speed_control"
 CONF_FAN_FEEDBACK: Final = "fan_feedback"
+CONF_AUTO_PRESET: Final = "auto_preset"
 
 SPEED_CONTROL_VARIABLE: Final = "variable"
 SPEED_CONTROL_THREE_SPEED: Final = "three_speed"

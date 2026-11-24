@@ -62,6 +62,7 @@ SEASONS = ("auto", "winter", "summer")
 BYPASS_MODES = ("auto", "closed", "open")
 
 # Register 51 special values
+SPEED_OFF = 0
 VARIABLE_SPEED_SCHEDULE = 101
 VARIABLE_SPEED_AUTO = 102
 THREE_SPEED_SCHEDULE = 4

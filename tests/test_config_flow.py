@@ -2,18 +2,19 @@
 
 from __future__ import annotations
 
+from homeassistant import config_entries
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.efilos_vmc.const import (
+    CONF_AUTO_PRESET,
     CONF_FAN_FEEDBACK,
     CONF_SPEED_CONTROL,
     CONF_UNIT_ID,
     DOMAIN,
 )
-from homeassistant import config_entries
 
 from .fake_vmc import FakeVmc
 
@@ -43,7 +44,11 @@ async def test_user_flow(hass: HomeAssistant, fake_vmc: FakeVmc) -> None:
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["title"] == "Efilos VMC"
     assert result["data"] == {CONF_HOST: "127.0.0.1", CONF_PORT: fake_vmc.port, CONF_UNIT_ID: 1}
-    assert result["options"] == {CONF_SPEED_CONTROL: "variable", CONF_FAN_FEEDBACK: "rpm"}
+    assert result["options"] == {
+        CONF_SPEED_CONTROL: "variable",
+        CONF_FAN_FEEDBACK: "rpm",
+        CONF_AUTO_PRESET: False,
+    }
     await hass.async_block_till_done()
 
     entry = result["result"]
@@ -108,11 +113,17 @@ async def test_options_flow(hass: HomeAssistant, fake_vmc: FakeVmc) -> None:
 
     result = await hass.config_entries.options.async_init(entry.entry_id)
     result = await hass.config_entries.options.async_configure(
-        result["flow_id"], {CONF_SPEED_CONTROL: "three_speed", CONF_FAN_FEEDBACK: "percent"}
+        result["flow_id"],
+        {CONF_SPEED_CONTROL: "three_speed", CONF_FAN_FEEDBACK: "percent", CONF_AUTO_PRESET: True},
     )
     assert result["type"] is FlowResultType.CREATE_ENTRY
     await hass.async_block_till_done()
-    assert entry.options == {CONF_SPEED_CONTROL: "three_speed", CONF_FAN_FEEDBACK: "percent"}
+    assert entry.options == {
+        CONF_SPEED_CONTROL: "three_speed",
+        CONF_FAN_FEEDBACK: "percent",
+        CONF_AUTO_PRESET: True,
+    }
+    assert hass.states.get("fan.efilos_vmc").attributes["preset_modes"] == ["schedule", "auto"]
     assert hass.states.get("sensor.efilos_vmc_supply_fan_speed").attributes[
         "unit_of_measurement"
     ] == "%"

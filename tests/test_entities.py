@@ -5,9 +5,11 @@ from __future__ import annotations
 import pytest
 from homeassistant.const import ATTR_ENTITY_ID, CONF_HOST, CONF_PORT, STATE_OFF, STATE_ON
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.efilos_vmc.const import (
+    CONF_AUTO_PRESET,
     CONF_FAN_FEEDBACK,
     CONF_SPEED_CONTROL,
     CONF_UNIT_ID,
@@ -55,7 +57,8 @@ async def test_states_match_real_unit(hass: HomeAssistant, fake_vmc: FakeVmc) ->
     assert fan.attributes["preset_mode"] is None
 
     assert hass.states.get("select.efilos_vmc_season").state == "winter"
-    assert hass.states.get("select.efilos_vmc_bypass").state == "auto"
+    # The bypass select is disabled by default: the tested unit ignores it.
+    assert hass.states.get("select.efilos_vmc_bypass") is None
     assert hass.states.get("binary_sensor.efilos_vmc_filter_alarm").state == STATE_OFF
     assert hass.states.get("binary_sensor.efilos_vmc_alarm").state == STATE_OFF
     assert hass.states.get("binary_sensor.efilos_vmc_bypass_open").state == STATE_OFF
@@ -71,27 +74,72 @@ async def test_states_match_real_unit(hass: HomeAssistant, fake_vmc: FakeVmc) ->
 async def test_fan_controls(hass: HomeAssistant, fake_vmc: FakeVmc) -> None:
     entry = await _setup(hass, fake_vmc)
     target = {ATTR_ENTITY_ID: "fan.efilos_vmc"}
+    assert hass.states.get("fan.efilos_vmc").attributes["preset_modes"] == ["schedule"]
 
     await hass.services.async_call("fan", "set_percentage", {**target, "percentage": 60}, blocking=True)
     assert fake_vmc.registers[51] == 60
-    assert fake_vmc.registers[20] == 1  # season bits untouched, fans still on
-
-    await hass.services.async_call("fan", "turn_off", target, blocking=True)
-    assert fake_vmc.registers[20] == 1 | (1 << 5)
     await _refresh(hass, entry)
-    assert hass.states.get("fan.efilos_vmc").state == STATE_OFF
 
-    await hass.services.async_call("fan", "set_preset_mode", {**target, "preset_mode": "auto"}, blocking=True)
-    assert fake_vmc.registers[51] == 102
+    # Off writes speed 0 and leaves register 20 alone.
+    await hass.services.async_call("fan", "turn_off", target, blocking=True)
+    assert fake_vmc.registers[51] == 0
     assert fake_vmc.registers[20] == 1
     await _refresh(hass, entry)
     fan = hass.states.get("fan.efilos_vmc")
+    assert fan.state == STATE_OFF
+    assert fan.attributes["percentage"] == 0
+
+    # On restores the last running speed.
+    await hass.services.async_call("fan", "turn_on", target, blocking=True)
+    assert fake_vmc.registers[51] == 60
+    await _refresh(hass, entry)
+    assert hass.states.get("fan.efilos_vmc").state == STATE_ON
+
+    await hass.services.async_call("fan", "set_preset_mode", {**target, "preset_mode": "schedule"}, blocking=True)
+    assert fake_vmc.registers[51] == 101
+    await _refresh(hass, entry)
+    fan = hass.states.get("fan.efilos_vmc")
     assert fan.state == STATE_ON
-    assert fan.attributes["preset_mode"] == "auto"
+    assert fan.attributes["preset_mode"] == "schedule"
     assert fan.attributes["percentage"] is None
 
+    # Turning off and on again brings the schedule back.
     await hass.services.async_call("fan", "set_percentage", {**target, "percentage": 0}, blocking=True)
-    assert fake_vmc.registers[20] & (1 << 5)
+    assert fake_vmc.registers[51] == 0
+    await _refresh(hass, entry)
+    await hass.services.async_call("fan", "turn_on", target, blocking=True)
+    assert fake_vmc.registers[51] == 101
+    assert await hass.config_entries.async_unload(entry.entry_id)
+
+
+async def test_fan_clears_fans_off_bit_on_units_that_use_it(hass: HomeAssistant, fake_vmc: FakeVmc) -> None:
+    fake_vmc.registers[20] = 1 | (1 << 5)
+    entry = await _setup(hass, fake_vmc)
+    assert hass.states.get("fan.efilos_vmc").state == STATE_OFF
+    await hass.services.async_call(
+        "fan", "set_percentage", {ATTR_ENTITY_ID: "fan.efilos_vmc", "percentage": 40}, blocking=True
+    )
+    assert fake_vmc.registers[51] == 40
+    assert fake_vmc.registers[20] == 1
+    assert await hass.config_entries.async_unload(entry.entry_id)
+
+
+async def test_auto_preset_when_sensor_fitted(hass: HomeAssistant, fake_vmc: FakeVmc) -> None:
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="Efilos VMC",
+        unique_id=f"127.0.0.1:{fake_vmc.port}:1",
+        data={CONF_HOST: "127.0.0.1", CONF_PORT: fake_vmc.port, CONF_UNIT_ID: 1},
+        options={CONF_SPEED_CONTROL: "variable", CONF_FAN_FEEDBACK: "rpm", CONF_AUTO_PRESET: True},
+    )
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    assert hass.states.get("fan.efilos_vmc").attributes["preset_modes"] == ["schedule", "auto"]
+    await hass.services.async_call(
+        "fan", "set_preset_mode", {ATTR_ENTITY_ID: "fan.efilos_vmc", "preset_mode": "auto"}, blocking=True
+    )
+    assert fake_vmc.registers[51] == 102
     assert await hass.config_entries.async_unload(entry.entry_id)
 
 
@@ -113,22 +161,38 @@ async def test_three_speed_fan(hass: HomeAssistant, fake_vmc: FakeVmc) -> None:
     assert await hass.config_entries.async_unload(entry.entry_id)
 
 
-async def test_selects_change_only_their_bits(hass: HomeAssistant, fake_vmc: FakeVmc) -> None:
+async def test_season_changes_only_its_bits(hass: HomeAssistant, fake_vmc: FakeVmc) -> None:
     fake_vmc.registers[20] = 1 | (1 << 6)  # winter, post-treatment off
     entry = await _setup(hass, fake_vmc)
-
-    await hass.services.async_call(
-        "select", "select_option", {ATTR_ENTITY_ID: "select.efilos_vmc_bypass", "option": "open"}, blocking=True
-    )
-    assert fake_vmc.registers[20] == 1 | (2 << 2) | (1 << 6)
+    assert hass.states.get("select.efilos_vmc_season").attributes["options"] == ["winter", "summer"]
 
     await hass.services.async_call(
         "select", "select_option", {ATTR_ENTITY_ID: "select.efilos_vmc_season", "option": "summer"}, blocking=True
     )
-    assert fake_vmc.registers[20] == 2 | (2 << 2) | (1 << 6)
+    assert fake_vmc.registers[20] == 2 | (1 << 6)
     await _refresh(hass, entry)
-    assert hass.states.get("select.efilos_vmc_bypass").state == "open"
     assert hass.states.get("select.efilos_vmc_season").state == "summer"
+
+    await hass.services.async_call(
+        "select", "select_option", {ATTR_ENTITY_ID: "select.efilos_vmc_season", "option": "winter"}, blocking=True
+    )
+    assert fake_vmc.registers[20] == 1 | (1 << 6)
+    assert await hass.config_entries.async_unload(entry.entry_id)
+
+
+async def test_bypass_select_when_enabled(hass: HomeAssistant, fake_vmc: FakeVmc) -> None:
+    entry = await _setup(hass, fake_vmc)
+    registry = er.async_get(hass)
+    entity_id = "select.efilos_vmc_bypass"
+    assert registry.async_get(entity_id).disabled_by is er.RegistryEntryDisabler.INTEGRATION
+    registry.async_update_entity(entity_id, disabled_by=None)
+    await hass.config_entries.async_reload(entry.entry_id)
+    await hass.async_block_till_done()
+
+    await hass.services.async_call(
+        "select", "select_option", {ATTR_ENTITY_ID: entity_id, "option": "open"}, blocking=True
+    )
+    assert fake_vmc.registers[20] == 1 | (2 << 2)
     assert await hass.config_entries.async_unload(entry.entry_id)
 
 
