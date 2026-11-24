@@ -26,7 +26,7 @@ async def test_read_and_write(fake_vmc: FakeVmc) -> None:
 async def test_exception_response(fake_vmc: FakeVmc) -> None:
     client = ModbusTcpClient("127.0.0.1", fake_vmc.port)
     with pytest.raises(ModbusExceptionResponse) as err:
-        await client.read_holding_registers(6, 1)  # register 7 isn't defined
+        await client.read_holding_registers(9, 1)  # register 10 isn't defined
     assert err.value.code == 2
     # The connection is still usable after an exception response.
     assert await client.read_holding_registers(19, 1) == [1]

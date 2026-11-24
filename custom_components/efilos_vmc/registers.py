@@ -22,7 +22,7 @@ POLL_BLOCKS: tuple[tuple[int, int], ...] = (
 # Read once at setup.
 REG_SW_VERSION_0 = 3   # AAMM
 REG_SW_VERSION_1 = 4   # DDPP
-REG_CONFIG_7 = 7       # B08 FANS_FAIL_TACH: 1 = fan feedback in rpm, else %
+REG_CONFIG_7 = 7       # B08 FANS_FAIL_TACH: documented as the rpm flag, unreliable in practice
 
 # Configuration
 REG_PARAMETER_FLAGS = 20
@@ -236,7 +236,7 @@ class VmcData:
 
 
 def format_software_version(ver0: int | None, ver1: int | None) -> str | None:
-    """Registers 3 and 4 hold the version as AAMM and DDPP."""
+    """Registers 3 and 4 hold the version as AAMM and DDPP, one BCD digit per nibble."""
     if ver0 is None or ver1 is None:
         return None
-    return f"{ver0:04d}.{ver1:04d}"
+    return f"{ver0:04X}.{ver1:04X}"

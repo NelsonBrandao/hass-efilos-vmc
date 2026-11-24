@@ -14,8 +14,9 @@ import struct
 # manual's 1-based register number. Everything else in the published
 # ranges is 0.
 REAL_UNIT_VALUES = {
-    3: 2105,
-    4: 1203,
+    3: 0x2501,  # firmware 2501.0900, read as 9473 / 2304
+    4: 0x0900,
+    7: 0,       # rpm flag (B08) clear even though the fans report rpm
     20: 1,      # winter, bypass auto, fans on
     51: 35,     # 35 %
     81: 166,    # 16.6 °C outdoor

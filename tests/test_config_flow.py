@@ -31,7 +31,7 @@ async def test_user_flow(hass: HomeAssistant, fake_vmc: FakeVmc) -> None:
     )
     assert result["type"] is FlowResultType.FORM
     assert result["step_id"] == "fans"
-    # Register 7 isn't readable on the fake, so the 1469 reading decides: rpm.
+    # Register 7's rpm flag is clear, like on the real unit, but 1469 can only be rpm.
     schema_defaults = {
         str(key): key.default() for key in result["data_schema"].schema if hasattr(key, "default")
     }
@@ -48,6 +48,22 @@ async def test_user_flow(hass: HomeAssistant, fake_vmc: FakeVmc) -> None:
 
     entry = result["result"]
     assert await hass.config_entries.async_unload(entry.entry_id)
+
+
+async def test_user_flow_detects_percent_feedback(hass: HomeAssistant, fake_vmc: FakeVmc) -> None:
+    fake_vmc.registers[87] = 35
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {CONF_HOST: "127.0.0.1", CONF_PORT: fake_vmc.port, CONF_UNIT_ID: 1},
+    )
+    assert result["step_id"] == "fans"
+    schema_defaults = {
+        str(key): key.default() for key in result["data_schema"].schema if hasattr(key, "default")
+    }
+    assert schema_defaults[CONF_FAN_FEEDBACK] == "percent"
 
 
 async def test_user_flow_cannot_connect(hass: HomeAssistant) -> None:

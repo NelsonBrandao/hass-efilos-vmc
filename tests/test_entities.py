@@ -64,7 +64,7 @@ async def test_states_match_real_unit(hass: HomeAssistant, fake_vmc: FakeVmc) ->
     assert hass.states.get("sensor.efilos_vmc_supply_airflow") is None
 
     device = entry.runtime_data
-    assert device.software_version == "2105.1203"
+    assert device.software_version == "2501.0900"
     assert await hass.config_entries.async_unload(entry.entry_id)
 
 

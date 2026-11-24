@@ -38,7 +38,7 @@ from .const import (
     SPEED_CONTROLS,
 )
 from .modbus import ModbusError, ModbusTcpClient
-from .registers import REG_CONFIG_7, REG_SPEED_SUPPLY, REG_TEMP_OUTDOOR
+from .registers import REG_SPEED_SUPPLY, REG_TEMP_OUTDOOR
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -101,13 +101,11 @@ async def _probe(data: dict[str, Any]) -> str:
     client = ModbusTcpClient(data[CONF_HOST], data[CONF_PORT], data[CONF_UNIT_ID])
     try:
         await client.read_holding_registers(REG_TEMP_OUTDOOR - 1, 1)
-        try:
-            (config_7,) = await client.read_holding_registers(REG_CONFIG_7 - 1, 1)
-        except ModbusError:
-            # Register 7 isn't in the published table; fall back to the value.
-            (speed,) = await client.read_holding_registers(REG_SPEED_SUPPLY - 1, 1)
-            return FAN_FEEDBACK_RPM if speed > 100 else FAN_FEEDBACK_PERCENT
-        return FAN_FEEDBACK_RPM if config_7 & (1 << 8) else FAN_FEEDBACK_PERCENT
+        # Register 7 B08 is documented as the rpm flag, but a real unit reports rpm with it cleared.
+        (speed,) = await client.read_holding_registers(REG_SPEED_SUPPLY - 1, 1)
+        if 0 < speed <= 100:
+            return FAN_FEEDBACK_PERCENT
+        return FAN_FEEDBACK_RPM
     finally:
         await client.close()
 
