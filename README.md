@@ -28,9 +28,10 @@ All entities belong to one device, set up from the UI.
 
 - An Efilos VMC with the **Controlador TS IP** panel (the board has an RJ45
   jack; the serial sticker reads `NTCPIP…`).
-- The panel connected to your network. If there's no cable at the panel, a
-  small travel router in Wi-Fi client mode next to it works well; see
-  [docs/mango-setup.md](docs/mango-setup.md).
+- The panel connected to your network. If there's no cable at the panel,
+  bridge it to Wi-Fi: a travel router in client mode
+  ([docs/mango-setup.md](docs/mango-setup.md)) or an ESP32 Ethernet board
+  hidden behind the panel ([docs/esp32-bridge.md](docs/esp32-bridge.md)).
 - Home Assistant 2025.8 or newer.
 
 ## Panel setup
@@ -133,8 +134,8 @@ peer".
   register map, translated to English
 - [docs/mango-setup.md](docs/mango-setup.md): networking the panel over Wi-Fi
   with a GL.iNet travel router
-- [docs/ethernet-cabling.md](docs/ethernet-cabling.md): options for running a
-  cable to the panel
+- [docs/esp32-bridge.md](docs/esp32-bridge.md): an ESP32 Ethernet board
+  behind the panel as a Wi-Fi bridge, powered from the panel's 24 V
 
 ## Development
 
