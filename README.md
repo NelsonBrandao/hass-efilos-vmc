@@ -80,11 +80,13 @@ Copy `custom_components/efilos_vmc` into your Home Assistant
 
 1. Enter the panel's IP (or the IP of a router that forwards port 502 to
    it), port `502` and unit ID `1`.
-2. Choose the fan type:
+2. **How the fan speed is set**:
    - **Variable speed**: the panel shows the speed as a %.
    - **Three speeds**: the panel shows speeds 1, 2 and 3.
-3. The fan speed feedback unit (rpm or %) is detected automatically. Change
-   it if the fan speed sensors look wrong.
+3. **Unit of the fan speed sensors**: rpm or %. This only affects the two
+   fan speed sensors, not how you control the fan. It's detected from the
+   current reading; choose rpm if those sensors show values in the
+   hundreds or thousands.
 
 Both choices can be changed later under **Configure**. The IP can be
 changed with **Reconfigure**.
