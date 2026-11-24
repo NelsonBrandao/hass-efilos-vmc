@@ -24,7 +24,7 @@ Transcribed and translated from the manual, pages 17–19
 | Mask | 255.255.255.0 |
 | Gateway | 192.168.1.1 |
 | Port | 502 (standard; not stated in the manual) |
-| Max simultaneous connections | 8 |
+| Max simultaneous connections | 8 per the manual; in practice only 1 (extra clients get a TCP reset) |
 | Disconnection timeout | 10 s (reg 8503, 65535 disables) |
 | RS485 (if card fitted) | 9600 baud, address 1, 1 stop bit, parity as set in the menu |
 | Installer password | 5678 |

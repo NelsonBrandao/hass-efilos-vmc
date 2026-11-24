@@ -33,7 +33,7 @@
       }
     },
     "error": {
-      "cannot_connect": "Could not read from the controller. Check the address, that Modbus is set to TCP-ip on the panel, and that nothing blocks port 502."
+      "cannot_connect": "Could not read from the controller. Check the address, that Modbus is set to TCP-ip on the panel, that nothing blocks port 502, and that no other Modbus client (such as a YAML modbus: setup) is connected: the panel serves only one at a time."
     },
     "abort": {
       "already_configured": "This controller is already configured.",

@@ -51,6 +51,16 @@ or read the temperatures:
 mbpoll -a 1 -r 81 -c 4 -t 4 -1 <panel-ip>
 ```
 
+Or run the read-only probe in this repo, which uses the integration's own
+client and prints the decoded values:
+
+```bash
+python3 -I scripts/probe.py <panel-ip>
+```
+
+These checks only work while nothing else is connected to the panel (see
+[One Modbus client at a time](#one-modbus-client-at-a-time)).
+
 ## Installation
 
 ### HACS
@@ -93,6 +103,20 @@ changed with **Reconfigure**.
   the unit as off as well.
 - **Changing one setting keeps the others:** bypass, season and on/off all
   live in one register; the integration only changes the bits it needs.
+
+### One Modbus client at a time
+
+The manual says the controller accepts 8 simultaneous Modbus TCP
+connections, but in practice it serves only one. While Home Assistant is
+connected, any other client (mbpoll, `scripts/probe.py`, a second
+integration) connects and is immediately reset with "Connection reset by
+peer".
+
+- Run only one of: this integration, Home Assistant's YAML `modbus:` setup,
+  or any other Modbus tool. When moving from a YAML setup to this
+  integration, remove the YAML in the same restart.
+- To test with mbpoll or the probe, disable the integration first
+  (**Settings → Devices & services → Efilos VMC → ⋮ → Disable**).
 
 ## Not supported yet
 
