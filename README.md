@@ -22,7 +22,16 @@ should work. Reports for other models are welcome.
 | Binary sensors | Filter alarm, fan failure, any other alarm (with the active alarm names as an attribute), bypass open, antifrost |
 | Optional sensors (disabled by default) | Water coil temperature, air-quality input, pressures and airflows (CAV/COP units), pre/post-heating |
 
-All entities belong to one device, set up from the UI.
+All entities belong to one device, set up from the UI. Available in English
+and Portuguese.
+
+## Reporting a problem or another model
+
+Open an [issue](https://github.com/NelsonBrandao/hass-efilos-vmc/issues) and
+attach the diagnostics file: **Settings → Devices & services → Efilos VMC →
+⋮ → Download diagnostics**. It contains your settings (with the IP address
+removed), the decoded state and a raw dump of every register in the manual's
+table, which is what's needed to support a different Efilos model.
 
 ## Requirements
 

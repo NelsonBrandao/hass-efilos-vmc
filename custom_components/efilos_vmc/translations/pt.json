@@ -1,0 +1,172 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Ligar à VMC Efilos",
+        "description": "Introduza o endereço do painel táctil Controlador TS IP. O Modbus tem de estar definido como TCP-ip no menu Instalador → Comunicação do painel (palavra-passe de instalador 5678).",
+        "data": {
+          "host": "Anfitrião",
+          "port": "Porta",
+          "unit_id": "ID da unidade Modbus"
+        },
+        "data_description": {
+          "host": "Endereço IP do painel (por defeito 192.168.1.243), ou de um router que reencaminhe a porta 502 para ele.",
+          "port": "Porta Modbus TCP, normalmente 502.",
+          "unit_id": "Deixe em 1, a não ser que o tenha alterado."
+        }
+      },
+      "fans": {
+        "title": "Configuração dos ventiladores",
+        "description": "A unidade dos sensores foi detetada a partir da leitura atual dos ventiladores; confirme antes de continuar.",
+        "data": {
+          "speed_control": "Como é definida a velocidade",
+          "fan_feedback": "Unidade dos sensores de velocidade"
+        },
+        "data_description": {
+          "speed_control": "Como define a velocidade no painel táctil: em percentagem, ou velocidades 1, 2 e 3.",
+          "fan_feedback": "Apenas a unidade dos sensores de velocidade dos ventiladores de insuflação e de extração. Não altera a forma como controla o ventilador. Escolha rpm se esses sensores mostrarem valores na casa das centenas ou dos milhares."
+        }
+      },
+      "reconfigure": {
+        "title": "Alterar ligação",
+        "data": {
+          "host": "Anfitrião",
+          "port": "Porta",
+          "unit_id": "ID da unidade Modbus"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Não foi possível ler o controlador. Verifique o endereço, que o Modbus está definido como TCP-ip no painel, que nada bloqueia a porta 502, e que nenhum outro cliente Modbus (como uma configuração YAML modbus:) está ligado: o painel só aceita um de cada vez."
+    },
+    "abort": {
+      "already_configured": "Este controlador já está configurado.",
+      "reconfigure_successful": "A ligação foi atualizada."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configuração dos ventiladores",
+        "data": {
+          "speed_control": "Como é definida a velocidade",
+          "fan_feedback": "Unidade dos sensores de velocidade"
+        },
+        "data_description": {
+          "speed_control": "Como define a velocidade no painel táctil: em percentagem, ou velocidades 1, 2 e 3.",
+          "fan_feedback": "Apenas a unidade dos sensores de velocidade dos ventiladores de insuflação e de extração. Não altera a forma como controla o ventilador. Escolha rpm se esses sensores mostrarem valores na casa das centenas ou dos milhares."
+        }
+      }
+    }
+  },
+  "selector": {
+    "speed_control": {
+      "options": {
+        "variable": "Velocidade variável (definida de 0 a 100 %)",
+        "three_speed": "Três velocidades (definidas como 1/2/3)"
+      }
+    },
+    "fan_feedback": {
+      "options": {
+        "rpm": "rpm (rotações por minuto)",
+        "percent": "Percentagem da velocidade máxima"
+      }
+    }
+  },
+  "entity": {
+    "fan": {
+      "vmc": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "schedule": "Programa horário",
+              "auto": "Automático"
+            }
+          }
+        }
+      }
+    },
+    "select": {
+      "bypass_mode": {
+        "name": "By-pass",
+        "state": {
+          "auto": "Automático",
+          "closed": "Fechado",
+          "open": "Aberto"
+        }
+      },
+      "season": {
+        "name": "Estação",
+        "state": {
+          "auto": "Automático",
+          "winter": "Inverno",
+          "summer": "Verão"
+        }
+      }
+    },
+    "binary_sensor": {
+      "bypass_open": {
+        "name": "By-pass aberto"
+      },
+      "antifrost": {
+        "name": "Antigelo"
+      },
+      "filter_alarm": {
+        "name": "Alarme de filtros"
+      },
+      "fan_failure": {
+        "name": "Avaria dos ventiladores"
+      },
+      "alarm": {
+        "name": "Alarme"
+      }
+    },
+    "sensor": {
+      "outdoor_temperature": {
+        "name": "Temperatura do ar exterior"
+      },
+      "extract_temperature": {
+        "name": "Temperatura do ar de extração"
+      },
+      "exhaust_temperature": {
+        "name": "Temperatura do ar expulso"
+      },
+      "supply_temperature": {
+        "name": "Temperatura do ar de insuflação"
+      },
+      "water_temperature": {
+        "name": "Temperatura da bateria de água"
+      },
+      "supply_fan_speed": {
+        "name": "Velocidade do ventilador de insuflação"
+      },
+      "exhaust_fan_speed": {
+        "name": "Velocidade do ventilador de extração"
+      },
+      "air_quality_input": {
+        "name": "Entrada de qualidade do ar"
+      },
+      "supply_pressure": {
+        "name": "Pressão de insuflação"
+      },
+      "exhaust_pressure": {
+        "name": "Pressão de extração"
+      },
+      "supply_airflow": {
+        "name": "Caudal de insuflação"
+      },
+      "exhaust_airflow": {
+        "name": "Caudal de extração"
+      },
+      "pre_heating": {
+        "name": "Pré-aquecimento"
+      },
+      "post_heating": {
+        "name": "Pós-aquecimento"
+      },
+      "fan_hours": {
+        "name": "Horas de funcionamento dos ventiladores"
+      }
+    }
+  }
+}
