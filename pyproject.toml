@@ -1,6 +1,6 @@
 [project]
 name = "hass-efilos-vmc"
-version = "0.2.0"
+version = "1.0.0"
 description = "Home Assistant integration for Efilos VMC units with the Controlador TS IP panel (Modbus TCP)"
 requires-python = ">=3.13"
 

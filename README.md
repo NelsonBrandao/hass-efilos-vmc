@@ -142,6 +142,7 @@ air-quality sensor:
 | Control | Result |
 |---|---|
 | Speed 1–100 % | Works |
+| Off / on (speed 0, then last speed restored) | Works |
 | Schedule preset | Works |
 | Season Winter / Summer | Works |
 | Auto preset | Ignored (no sensor), so hidden by default |
